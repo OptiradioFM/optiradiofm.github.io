@@ -610,7 +610,13 @@
   </div>
 </footer>
 
-<audio id="radioAudio" preload="none" style="display:none"></audio>
+<audio id="radioAudio" preload="none" style="display:none">
+  <!-- Stream Principal: Reemplaza el enlace de abajo con tu URL principal -->
+  <source src="https://uk6freenew.listen2myradio.com/live.mp3?typeportmount=s1_8957_stream_36798360" type="audio/mpeg">
+
+  <!-- Stream Secundario (Fallback): El enlace Shoutcast forzado a audio -->
+  <source src="http://uk6freenew.listen2myradio.com:8957/;" type="audio/mpeg">
+</audio>
 
 <script>
 (function(){
@@ -659,7 +665,7 @@
         // primer fallo: puede ser un enganche transitorio de conexión,
         // reintentamos una vez antes de avisar que no hay señal
         reconnectAttempted = true;
-        setTimeout(attemptConnect, 1200);
+        setTimeout(attemptConnect, 12000);
       } else {
         showStreamNotice();
       }
