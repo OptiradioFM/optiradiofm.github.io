@@ -644,8 +644,8 @@
 </footer>
 
 <audio id="radioAudio" preload="none" style="display:none">
-  <!-- Shoutcast v1: el punto y coma fuerza la respuesta como stream de audio -->
-  <source src="http://uk6freenew.listen2myradio.com:8957/;" type="audio/mpeg">
+  <!-- El relay local solicita el stream Shoutcast v1 como VLC y lo entrega al navegador -->
+  <source src="/api/radio/stream" type="audio/mpeg">
 </audio>
 
 <script>
@@ -655,8 +655,12 @@
 })();
 
 (function(){
-  // Shoutcast v1: usar /; para que el servidor entregue el audio en vivo.
-  var STREAM_URL = "http://uk6freenew.listen2myradio.com:8957/;";
+  // Cuando la página está servida, usa el relay que emula la solicitud de VLC.
+  // El enlace directo queda como respaldo para una página abierta como archivo local.
+  var DIRECT_STREAM_URL = "http://uk6freenew.listen2myradio.com:8957/;";
+  var STREAM_URL = (window.location.protocol === "http:" || window.location.protocol === "https:")
+    ? "/api/radio/stream"
+    : DIRECT_STREAM_URL;
 
   var audio        = document.getElementById('radioAudio');
   var playButtons  = document.querySelectorAll('.play-toggle');
