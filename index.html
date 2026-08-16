@@ -644,10 +644,7 @@
 </footer>
 
 <audio id="radioAudio" preload="none" style="display:none">
-  <!-- Stream Principal: Reemplaza el enlace de abajo con tu URL principal -->
-  <source src="http://admin:omar110dj@uk14freenew.listen2myradio.com:26098/stream.m3u" type="audio/mpeg">
-
-  <!-- Stream Secundario (Fallback): El enlace Shoutcast forzado a audio -->
+  <!-- Shoutcast v1: el punto y coma fuerza la respuesta como stream de audio -->
   <source src="http://uk6freenew.listen2myradio.com:8957/;" type="audio/mpeg">
 </audio>
 
@@ -658,7 +655,8 @@
 })();
 
 (function(){
-  var STREAM_URL = "https://uk6freenew.listen2myradio.com/live.mp3?typeportmount=s1_8957_stream_36798360";
+  // Shoutcast v1: usar /; para que el servidor entregue el audio en vivo.
+  var STREAM_URL = "http://uk6freenew.listen2myradio.com:8957/;";
 
   var audio        = document.getElementById('radioAudio');
   var playButtons  = document.querySelectorAll('.play-toggle');
