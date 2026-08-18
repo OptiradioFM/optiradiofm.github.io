@@ -658,9 +658,11 @@
   // Cuando la página está servida, usa el relay que emula la solicitud de VLC.
   // El enlace directo queda como respaldo para una página abierta como archivo local.
   var DIRECT_STREAM_URL = "http://uk6freenew.listen2myradio.com:8957/;";
-  var STREAM_URL = (window.location.protocol === "http:" || window.location.protocol === "https:")
+  // Después de publicar el Worker de Cloudflare, pega aquí su URL completa.
+  var CLOUDFLARE_RELAY_URL = "https://relayoptiradio.ogi001283.workers.dev/";
+  var STREAM_URL = CLOUDFLARE_RELAY_URL || ((window.location.protocol === "http:" || window.location.protocol === "https:")
     ? "/api/radio/stream"
-    : DIRECT_STREAM_URL;
+    : DIRECT_STREAM_URL);
 
   var audio        = document.getElementById('radioAudio');
   var playButtons  = document.querySelectorAll('.play-toggle');
