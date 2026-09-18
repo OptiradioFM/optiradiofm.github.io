@@ -1022,18 +1022,14 @@ var OPTI = { muteTV:function(){}, pauseRadio:function(){} };
     return cleanTitle(m[1]) || null;
   }
 
+  // Worker de Cloudflare (worker-meta.js) que hace de relay con CORS.
+  // Después de publicarlo, pega aquí su URL completa (sin "/" al final).
+  var META_RELAY_URL = "https://relayoptiradio-meta.ogi001283.workers.dev";
+
   var SOURCES = [
-    { url:'http://uk6freenew.listen2myradio.com:8957/7.html', extract:extractShoutcast7 },
-    { url:'https://onlineradiobox.com/ar/optiradio/',          extract:extractFromOnlineRadioBox }
+    { url: META_RELAY_URL + '/7.html', extract:extractShoutcast7 },
+    { url: META_RELAY_URL + '/orb',    extract:extractFromOnlineRadioBox }
   ];
-  function buildProxyAttempts(target){
-    var enc = encodeURIComponent(target);
-    return [
-      { url:'https://api.allorigins.win/raw?url=' + enc, wrapped:false },
-      { url:'https://corsproxy.io/?url=' + enc,           wrapped:false },
-      { url:'https://api.allorigins.win/get?url=' + enc,  wrapped:true  }
-    ];
-  }
   function fetchWithTimeout(url, ms){
     var ctrl = new AbortController();
     var timer = setTimeout(function(){ ctrl.abort(); }, ms);
@@ -1042,25 +1038,14 @@ var OPTI = { muteTV:function(){}, pauseRadio:function(){} };
   async function fetchCurrentSong(){
     for (var s = 0; s < SOURCES.length; s++){
       var source = SOURCES[s];
-      var attempts = buildProxyAttempts(source.url);
-      for (var i = 0; i < attempts.length; i++){
-        var a = attempts[i];
-        try{
-          var res = await fetchWithTimeout(a.url, 6000);
-          if(!res.ok){ continue; }
-          var text;
-          if(a.wrapped){
-            var wrap = await res.json();
-            text = (wrap && wrap.contents) ? wrap.contents : '';
-          } else {
-            text = await res.text();
-          }
-          text = (text || '').trim();
-          if(!text){ continue; }
-          var song = source.extract(text);
-          if(song){ return song; }
-        }catch(err){ /* probamos el siguiente intento */ }
-      }
+      try{
+        var res = await fetchWithTimeout(source.url, 6000);
+        if(!res.ok){ continue; }
+        var text = ((await res.text()) || '').trim();
+        if(!text){ continue; }
+        var song = source.extract(text);
+        if(song){ return song; }
+      }catch(err){ /* probamos la siguiente fuente */ }
     }
     return null;
   }
